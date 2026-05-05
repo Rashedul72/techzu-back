@@ -1,1 +1,1 @@
-# techzu-back
+Techzu backend API

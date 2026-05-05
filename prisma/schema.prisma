@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ReservationStatus {
+  ACTIVE
+  COMPLETED
+  EXPIRED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reservations Reservation[]
+  purchases    Purchase[]
+
+  @@map("users")
+}
+
+model Drop {
+  id             String    @id @default(cuid())
+  name           String
+  description    String?
+  priceCents     Int
+  totalUnits     Int
+  availableStock Int
+  startsAt       DateTime
+  endsAt         DateTime?
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  reservations Reservation[]
+  purchases    Purchase[]
+
+  @@index([startsAt, endsAt])
+  @@map("drops")
+}
+
+model Reservation {
+  id        String            @id @default(cuid())
+  dropId    String
+  userId    String
+  expiresAt DateTime
+  status    ReservationStatus @default(ACTIVE)
+  createdAt DateTime          @default(now())
+
+  drop Drop @relation(fields: [dropId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status, expiresAt])
+  @@index([userId, dropId, status])
+  @@map("reservations")
+}
+
+model Purchase {
+  id        String   @id @default(cuid())
+  dropId    String
+  userId    String
+  createdAt DateTime @default(now())
+
+  drop Drop @relation(fields: [dropId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([dropId, createdAt(sort: Desc)])
+  @@map("purchases")
+}
