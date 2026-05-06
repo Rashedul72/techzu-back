@@ -88,6 +88,52 @@ function readInt(v: unknown, field: string): number {
   throw new HttpError(400, `${field} must be an integer`);
 }
 
+function parseStartsAt(input: string): Date {
+  const direct = new Date(input);
+  if (!Number.isNaN(direct.getTime())) return direct;
+
+  const m = input
+    .trim()
+    .match(/^(\d{4})-(\d{2})-(\d{2})\s+(\d{1,2}):(\d{2})\s*([aApP][mM])$/);
+  if (!m) {
+    throw new HttpError(
+      400,
+      "startsAt must be a valid date (ISO-8601 or YYYY-MM-DD hh:mmapm)",
+    );
+  }
+
+  const year = Number(m[1]);
+  const month = Number(m[2]);
+  const day = Number(m[3]);
+  const hour12 = Number(m[4]);
+  const minute = Number(m[5]);
+  const meridiem = m[6].toLowerCase();
+
+  if (hour12 < 1 || hour12 > 12 || minute < 0 || minute > 59) {
+    throw new HttpError(
+      400,
+      "startsAt must be a valid date (ISO-8601 or YYYY-MM-DD hh:mmapm)",
+    );
+  }
+
+  const hour24 = hour12 % 12 + (meridiem === "pm" ? 12 : 0);
+  const parsed = new Date(year, month - 1, day, hour24, minute, 0, 0);
+  if (
+    parsed.getFullYear() !== year ||
+    parsed.getMonth() !== month - 1 ||
+    parsed.getDate() !== day ||
+    parsed.getHours() !== hour24 ||
+    parsed.getMinutes() !== minute
+  ) {
+    throw new HttpError(
+      400,
+      "startsAt must be a valid date (ISO-8601 or YYYY-MM-DD hh:mmapm)",
+    );
+  }
+
+  return parsed;
+}
+
 export function parseCreateMerchDropBody(body: unknown): CreateMerchDropInput {
   if (!body || typeof body !== "object") throw new HttpError(400, "Invalid JSON body");
   const b = body as Record<string, unknown>;
@@ -108,10 +154,13 @@ export function parseCreateMerchDropBody(body: unknown): CreateMerchDropInput {
   }
   let startsAt = new Date();
   if (b.startsAt !== null && b.startsAt !== undefined) {
-    if (typeof b.startsAt !== "string") throw new HttpError(400, "startsAt must be an ISO-8601 string");
-    const parsed = new Date(b.startsAt);
-    if (Number.isNaN(parsed.getTime())) throw new HttpError(400, "startsAt must be a valid date");
-    startsAt = parsed;
+    if (typeof b.startsAt !== "string") {
+      throw new HttpError(
+        400,
+        "startsAt must be a string (ISO-8601 or YYYY-MM-DD hh:mmapm)",
+      );
+    }
+    startsAt = parseStartsAt(b.startsAt);
   }
   return {
     name,
