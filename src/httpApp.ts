@@ -26,7 +26,7 @@ export function createApp(io: IoServer | null): express.Express {
   if (process.env.NODE_ENV !== "production") {
     app.post(
       "/api/dev/broadcast-inventory",
-      async (_req: Request, res: Response, next: NextFunction) => {
+      async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
           await broadcastInventorySync(io);
           res.json({ ok: true });

@@ -1,7 +1,7 @@
 import "dotenv/config";
 import http from "http";
 import { Server } from "socket.io";
-import { createApp } from "./app";
+import { createApp } from "./httpApp";
 import { clientOrigin, httpPort } from "./lib/serverConfig";
 import { registerInventorySocket } from "./socket/inventory";
 import { startReservationExpiryLoop } from "./services/reservationExpiry.service";
