@@ -25,15 +25,19 @@ function registerInventorySocket(io) {
     });
 }
 async function broadcastInventorySync(io) {
+    if (!io)
+        return;
     io.to(ROOM).emit("inventory:sync", await syncPayload());
 }
 function broadcastStockUpdates(io, updates) {
+    if (!io)
+        return;
     for (const u of updates) {
         io.to(ROOM).emit("stock:update", u);
     }
 }
 function broadcastReservationExpired(io, items) {
-    if (items.length === 0)
+    if (!io || items.length === 0)
         return;
     io.to(ROOM).emit("reservation:expired", { items });
 }

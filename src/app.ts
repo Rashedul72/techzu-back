@@ -6,7 +6,7 @@ import { clientOrigin } from "./lib/serverConfig";
 import createDropsRouter from "./routes/drops.routes";
 import { broadcastInventorySync } from "./socket/inventory";
 
-export function createApp(io: IoServer): express.Express {
+export function createApp(io: IoServer | null): express.Express {
   const app = express();
 
   app.use(

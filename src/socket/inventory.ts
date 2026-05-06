@@ -23,23 +23,25 @@ export function registerInventorySocket(io: Server): void {
   });
 }
 
-export async function broadcastInventorySync(io: Server): Promise<void> {
+export async function broadcastInventorySync(io: Server | null): Promise<void> {
+  if (!io) return;
   io.to(ROOM).emit("inventory:sync", await syncPayload());
 }
 
 export function broadcastStockUpdates(
-  io: Server,
+  io: Server | null,
   updates: { dropId: string; availableStock: number }[],
 ): void {
+  if (!io) return;
   for (const u of updates) {
     io.to(ROOM).emit("stock:update", u);
   }
 }
 
 export function broadcastReservationExpired(
-  io: Server,
+  io: Server | null,
   items: { dropId: string; username: string }[],
 ): void {
-  if (items.length === 0) return;
+  if (!io || items.length === 0) return;
   io.to(ROOM).emit("reservation:expired", { items });
 }

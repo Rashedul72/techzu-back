@@ -9,7 +9,7 @@ import {
 
 const SWEEP_MS = 2000;
 
-export async function sweepExpiredReservations(io: Server): Promise<void> {
+export async function sweepExpiredReservations(io: Server | null): Promise<void> {
   const now = new Date();
   const outcome = await prisma.$transaction(async (tx) => {
     const rows = await tx.reservation.findMany({

@@ -8,7 +8,10 @@ if (!connectionString) {
   throw new Error("DATABASE_URL is not set.");
 }
 
-const pool = new Pool({ connectionString });
+const pool = new Pool({
+  connectionString,
+  max: process.env.VERCEL ? 1 : 10,
+});
 const adapter = new PrismaPg(pool);
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };

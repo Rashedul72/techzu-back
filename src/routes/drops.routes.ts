@@ -7,7 +7,7 @@ import {
 } from "../services/drop.service";
 import { broadcastInventorySync } from "../socket/inventory";
 
-export default function createDropsRouter(io: IoServer): Router {
+export default function createDropsRouter(io: IoServer | null): Router {
   const router = Router();
 
   router.get(
