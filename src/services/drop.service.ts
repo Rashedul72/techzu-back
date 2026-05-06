@@ -4,6 +4,8 @@ import { prisma } from "../lib/prisma";
 import type { DropDto } from "../types/drop.dto";
 import { ensureUserInTransaction } from "./user.service";
 
+const PURCHASE_FEED_LIMIT = 3;
+
 function toDropDto(
   d: {
     id: string;
@@ -45,7 +47,7 @@ export async function listActiveDropsDto(): Promise<DropDto[]> {
     include: {
       purchases: {
         orderBy: { createdAt: "desc" },
-        take: 3,
+        take: PURCHASE_FEED_LIMIT,
         include: {
           user: { select: { username: true } },
         },
@@ -120,7 +122,7 @@ export async function createMerchDrop(input: CreateMerchDropInput): Promise<Drop
     include: {
       purchases: {
         orderBy: { createdAt: "desc" },
-        take: 3,
+        take: PURCHASE_FEED_LIMIT,
         include: { user: { select: { username: true } } },
       },
     },

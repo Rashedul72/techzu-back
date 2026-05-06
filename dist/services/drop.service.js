@@ -9,6 +9,7 @@ const client_1 = require("@prisma/client");
 const httpError_1 = require("../lib/httpError");
 const prisma_1 = require("../lib/prisma");
 const user_service_1 = require("./user.service");
+const PURCHASE_FEED_LIMIT = 3;
 function toDropDto(d) {
     return {
         id: d.id,
@@ -34,7 +35,7 @@ async function listActiveDropsDto() {
         include: {
             purchases: {
                 orderBy: { createdAt: "desc" },
-                take: 3,
+                take: PURCHASE_FEED_LIMIT,
                 include: {
                     user: { select: { username: true } },
                 },
@@ -102,7 +103,7 @@ async function createMerchDrop(input) {
         include: {
             purchases: {
                 orderBy: { createdAt: "desc" },
-                take: 3,
+                take: PURCHASE_FEED_LIMIT,
                 include: { user: { select: { username: true } } },
             },
         },
