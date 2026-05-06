@@ -15,6 +15,20 @@ function createDropsRouter(io) {
             next(e);
         }
     });
+    router.post("/", async (req, res, next) => {
+        try {
+            const input = (0, drop_service_1.parseCreateMerchDropBody)(req.body);
+            const drop = await (0, drop_service_1.createMerchDrop)(input);
+            await (0, inventory_1.broadcastInventorySync)(io);
+            res.status(201).json({
+                message: "Merch drop created successfully. It is live for buyers whenever isActive is true.",
+                drop,
+            });
+        }
+        catch (e) {
+            next(e);
+        }
+    });
     router.post("/:dropId/reserve", async (req, res, next) => {
         try {
             const username = req.body?.username;

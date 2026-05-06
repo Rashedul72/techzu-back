@@ -6,7 +6,6 @@ async function main() {
   await prisma.drop.deleteMany();
   await prisma.user.deleteMany();
 
-  const now = new Date();
   const sample = [
     {
       name: "Air Jordan 1 — Chicago",
@@ -14,8 +13,6 @@ async function main() {
       priceCents: 180_00,
       totalUnits: 100,
       availableStock: 100,
-      startsAt: new Date(now.getTime() - 60 * 60 * 1000),
-      endsAt: null as Date | null,
     },
     {
       name: "Nike Dunk Low — Panda",
@@ -23,8 +20,6 @@ async function main() {
       priceCents: 110_00,
       totalUnits: 50,
       availableStock: 50,
-      startsAt: new Date(now.getTime() - 60 * 60 * 1000),
-      endsAt: null as Date | null,
     },
     {
       name: "Yeezy 350 — Zebra",
@@ -32,8 +27,6 @@ async function main() {
       priceCents: 220_00,
       totalUnits: 5,
       availableStock: 5,
-      startsAt: new Date(now.getTime() - 60 * 60 * 1000),
-      endsAt: null as Date | null,
     },
     {
       name: "New Balance 990v6 — Grey",
@@ -41,8 +34,6 @@ async function main() {
       priceCents: 210_00,
       totalUnits: 80,
       availableStock: 80,
-      startsAt: new Date(now.getTime() - 60 * 60 * 1000),
-      endsAt: null as Date | null,
     },
     {
       name: "Adidas Samba OG — White",
@@ -50,8 +41,6 @@ async function main() {
       priceCents: 100_00,
       totalUnits: 120,
       availableStock: 120,
-      startsAt: new Date(now.getTime() - 60 * 60 * 1000),
-      endsAt: null as Date | null,
     },
     {
       name: "Asics Gel-Kayano 14 — Silver",
@@ -59,8 +48,6 @@ async function main() {
       priceCents: 160_00,
       totalUnits: 60,
       availableStock: 60,
-      startsAt: new Date(now.getTime() - 60 * 60 * 1000),
-      endsAt: null as Date | null,
     },
     {
       name: "Converse Chuck 70 — Black",
@@ -68,8 +55,6 @@ async function main() {
       priceCents: 85_00,
       totalUnits: 200,
       availableStock: 200,
-      startsAt: new Date(now.getTime() - 60 * 60 * 1000),
-      endsAt: null as Date | null,
     },
     {
       name: "Salomon XT-6 — Black",
@@ -77,8 +62,6 @@ async function main() {
       priceCents: 190_00,
       totalUnits: 40,
       availableStock: 40,
-      startsAt: new Date(now.getTime() - 60 * 60 * 1000),
-      endsAt: null as Date | null,
     },
     {
       name: "Nike Air Max 1 — Anniversary Red",
@@ -86,8 +69,6 @@ async function main() {
       priceCents: 140_00,
       totalUnits: 70,
       availableStock: 70,
-      startsAt: new Date(now.getTime() - 60 * 60 * 1000),
-      endsAt: null as Date | null,
     },
     {
       name: "Puma Suede Classic — Blue",
@@ -95,8 +76,6 @@ async function main() {
       priceCents: 70_00,
       totalUnits: 90,
       availableStock: 90,
-      startsAt: new Date(now.getTime() - 60 * 60 * 1000),
-      endsAt: null as Date | null,
     },
     {
       name: "Reebok Club C 85 — White",
@@ -104,8 +83,6 @@ async function main() {
       priceCents: 80_00,
       totalUnits: 100,
       availableStock: 100,
-      startsAt: new Date(now.getTime() - 60 * 60 * 1000),
-      endsAt: null as Date | null,
     },
     {
       name: "Vans Old Skool — Black/White",
@@ -113,8 +90,6 @@ async function main() {
       priceCents: 65_00,
       totalUnits: 150,
       availableStock: 150,
-      startsAt: new Date(now.getTime() - 60 * 60 * 1000),
-      endsAt: null as Date | null,
     },
     {
       name: "Nike Blazer Mid '77 — Vintage",
@@ -122,8 +97,6 @@ async function main() {
       priceCents: 100_00,
       totalUnits: 55,
       availableStock: 55,
-      startsAt: new Date(now.getTime() - 60 * 60 * 1000),
-      endsAt: null as Date | null,
     },
     {
       name: "Jordan 4 — Military Black",
@@ -131,8 +104,6 @@ async function main() {
       priceCents: 210_00,
       totalUnits: 30,
       availableStock: 30,
-      startsAt: new Date(now.getTime() - 60 * 60 * 1000),
-      endsAt: null as Date | null,
     },
     {
       name: "Adidas Ultraboost 1.0 — Triple Black",
@@ -140,8 +111,6 @@ async function main() {
       priceCents: 190_00,
       totalUnits: 45,
       availableStock: 45,
-      startsAt: new Date(now.getTime() - 60 * 60 * 1000),
-      endsAt: null as Date | null,
     },
     {
       name: "Nike Zoom Vomero 5 — Photon Dust",
@@ -149,8 +118,6 @@ async function main() {
       priceCents: 160_00,
       totalUnits: 65,
       availableStock: 65,
-      startsAt: new Date(now.getTime() - 60 * 60 * 1000),
-      endsAt: null as Date | null,
     },
     {
       name: "Hoka Clifton 9 — Blue",
@@ -158,8 +125,6 @@ async function main() {
       priceCents: 145_00,
       totalUnits: 75,
       availableStock: 75,
-      startsAt: new Date(now.getTime() - 60 * 60 * 1000),
-      endsAt: null as Date | null,
     },
     {
       name: "On Cloudmonster — White",
@@ -167,8 +132,6 @@ async function main() {
       priceCents: 170_00,
       totalUnits: 50,
       availableStock: 50,
-      startsAt: new Date(now.getTime() - 60 * 60 * 1000),
-      endsAt: null as Date | null,
     },
     {
       name: "Brooks Ghost 15 — Neutral",
@@ -176,8 +139,6 @@ async function main() {
       priceCents: 140_00,
       totalUnits: 60,
       availableStock: 60,
-      startsAt: new Date(now.getTime() - 60 * 60 * 1000),
-      endsAt: null as Date | null,
     },
     {
       name: "Nike Cortez — Forrest Gump",
@@ -185,8 +146,6 @@ async function main() {
       priceCents: 90_00,
       totalUnits: 85,
       availableStock: 85,
-      startsAt: new Date(now.getTime() - 60 * 60 * 1000),
-      endsAt: null as Date | null,
     },
   ];
 
@@ -195,6 +154,7 @@ async function main() {
       data: {
         ...s,
         isActive: true,
+        updatedAt: null,
       },
     });
   }

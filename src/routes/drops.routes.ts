@@ -1,7 +1,9 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
 import type { Server as IoServer } from "socket.io";
 import {
+  createMerchDrop,
   listActiveDropsDto,
+  parseCreateMerchDropBody,
   purchaseDropForUsername,
   reserveDropForUsername,
 } from "../services/drop.service";
@@ -16,6 +18,24 @@ export default function createDropsRouter(io: IoServer | null): Router {
       try {
         const drops = await listActiveDropsDto();
         res.json({ drops });
+      } catch (e) {
+        next(e);
+      }
+    },
+  );
+
+  router.post(
+    "/",
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      try {
+        const input = parseCreateMerchDropBody(req.body);
+        const drop = await createMerchDrop(input);
+        await broadcastInventorySync(io);
+        res.status(201).json({
+          message:
+            "Merch drop created successfully. It is live for buyers whenever isActive is true.",
+          drop,
+        });
       } catch (e) {
         next(e);
       }

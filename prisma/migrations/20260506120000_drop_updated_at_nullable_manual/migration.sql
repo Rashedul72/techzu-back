@@ -1,0 +1,1 @@
+ALTER TABLE "drops" ALTER COLUMN "updatedAt" DROP NOT NULL;

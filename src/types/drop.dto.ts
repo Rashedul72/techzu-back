@@ -5,8 +5,7 @@ export type DropDto = {
   priceCents: number;
   totalUnits: number;
   availableStock: number;
-  startsAt: string;
-  endsAt: string | null;
+  updatedAt: string | null;
   recentPurchasers: {
     username: string;
     purchasedAt: string;
