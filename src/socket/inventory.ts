@@ -26,3 +26,20 @@ export function registerInventorySocket(io: Server): void {
 export async function broadcastInventorySync(io: Server): Promise<void> {
   io.to(ROOM).emit("inventory:sync", await syncPayload());
 }
+
+export function broadcastStockUpdates(
+  io: Server,
+  updates: { dropId: string; availableStock: number }[],
+): void {
+  for (const u of updates) {
+    io.to(ROOM).emit("stock:update", u);
+  }
+}
+
+export function broadcastReservationExpired(
+  io: Server,
+  items: { dropId: string; username: string }[],
+): void {
+  if (items.length === 0) return;
+  io.to(ROOM).emit("reservation:expired", { items });
+}
