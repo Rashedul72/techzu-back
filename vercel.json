@@ -1,10 +1,4 @@
 {
   "buildCommand": "npm run build",
-  "rewrites": [{ "source": "/(.*)", "destination": "/api" }],
-  "crons": [
-    {
-      "path": "/api/cron/expire-reservations",
-      "schedule": "* * * * *"
-    }
-  ]
+  "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
 }

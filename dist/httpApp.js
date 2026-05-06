@@ -9,7 +9,6 @@ const express_1 = __importDefault(require("express"));
 const httpError_1 = require("./lib/httpError");
 const serverConfig_1 = require("./lib/serverConfig");
 const drops_routes_1 = __importDefault(require("./routes/drops.routes"));
-const reservationExpiry_service_1 = require("./services/reservationExpiry.service");
 const inventory_1 = require("./socket/inventory");
 function createApp(io) {
     const app = (0, express_1.default)();
@@ -22,21 +21,6 @@ function createApp(io) {
         res.json({ ok: true });
     });
     app.use("/api/drops", (0, drops_routes_1.default)(io));
-    app.get("/api/cron/expire-reservations", async (req, res, next) => {
-        try {
-            const secret = process.env.CRON_SECRET;
-            if (!secret ||
-                req.headers.authorization !== `Bearer ${secret}`) {
-                res.status(401).json({ error: "Unauthorized" });
-                return;
-            }
-            await (0, reservationExpiry_service_1.sweepExpiredReservations)(null);
-            res.status(200).json({ ok: true });
-        }
-        catch (e) {
-            next(e);
-        }
-    });
     if (process.env.NODE_ENV !== "production") {
         app.post("/api/dev/broadcast-inventory", async (_req, res, next) => {
             try {
