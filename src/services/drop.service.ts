@@ -102,3 +102,55 @@ export async function reserveDropForUsername(
     };
   });
 }
+
+export type PurchaseDropSuccess = {
+  purchaseId: string;
+  purchasedAt: string;
+  availableStock: number;
+};
+
+export async function purchaseDropForUsername(
+  dropId: string,
+  username: string,
+): Promise<PurchaseDropSuccess> {
+  const now = new Date();
+
+  return prisma.$transaction(async (tx) => {
+    const user = await ensureUserInTransaction(tx, username);
+
+    const drop = await tx.drop.findFirst({
+      where: { id: dropId, ...activeVisibleWhere(now) },
+    });
+    if (!drop) throw new HttpError(404, "Drop not found");
+
+    const reservation = await tx.reservation.findFirst({
+      where: {
+        dropId,
+        userId: user.id,
+        status: ReservationStatus.ACTIVE,
+        expiresAt: { gt: now },
+      },
+    });
+    if (!reservation) throw new HttpError(409, "No active reservation");
+
+    const purchase = await tx.purchase.create({
+      data: { dropId, userId: user.id },
+    });
+
+    await tx.reservation.update({
+      where: { id: reservation.id },
+      data: { status: ReservationStatus.COMPLETED },
+    });
+
+    const next = await tx.drop.findUniqueOrThrow({
+      where: { id: dropId },
+      select: { availableStock: true },
+    });
+
+    return {
+      purchaseId: purchase.id,
+      purchasedAt: purchase.createdAt.toISOString(),
+      availableStock: next.availableStock,
+    };
+  });
+}
