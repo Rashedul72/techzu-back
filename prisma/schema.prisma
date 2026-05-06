@@ -32,7 +32,6 @@ model Drop {
   totalUnits     Int
   availableStock Int
   isActive       Boolean   @default(true)
-  /// When the drop becomes eligible for reservations (UTC).
   startsAt       DateTime  @default(now())
   createdAt      DateTime  @default(now())
   updatedAt      DateTime?

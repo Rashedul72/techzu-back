@@ -38,7 +38,6 @@ function toDropDto(
   };
 }
 
-/** Drops buyers can see and reserve: active flag on and start time has passed. */
 function liveDropWhere(now: Date) {
   return {
     isActive: true,
@@ -71,7 +70,6 @@ export type CreateMerchDropInput = {
   priceCents: number;
   totalUnits: number;
   isActive: boolean;
-  /** When reservations open; omit for immediate go-live. */
   startsAt: Date;
 };
 
