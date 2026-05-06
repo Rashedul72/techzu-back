@@ -150,9 +150,11 @@ async function main() {
   ];
 
   for (const s of sample) {
+    const startsAt = new Date();
     await prisma.drop.create({
       data: {
         ...s,
+        startsAt,
         isActive: true,
         updatedAt: null,
       },

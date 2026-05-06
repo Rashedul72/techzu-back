@@ -5,6 +5,7 @@ export type DropDto = {
   priceCents: number;
   totalUnits: number;
   availableStock: number;
+  startsAt: string;
   updatedAt: string | null;
   recentPurchasers: {
     username: string;

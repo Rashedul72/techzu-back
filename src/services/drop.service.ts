@@ -14,6 +14,7 @@ function toDropDto(
     priceCents: number;
     totalUnits: number;
     availableStock: number;
+    startsAt: Date;
     updatedAt: Date | null;
     purchases: {
       createdAt: Date;
@@ -28,6 +29,7 @@ function toDropDto(
     priceCents: d.priceCents,
     totalUnits: d.totalUnits,
     availableStock: d.availableStock,
+    startsAt: d.startsAt.toISOString(),
     updatedAt: d.updatedAt?.toISOString() ?? null,
     recentPurchasers: d.purchases.map((p) => ({
       username: p.user.username,
@@ -36,13 +38,18 @@ function toDropDto(
   };
 }
 
-function activeVisibleWhere() {
-  return { isActive: true };
+/** Drops buyers can see and reserve: active flag on and start time has passed. */
+function liveDropWhere(now: Date) {
+  return {
+    isActive: true,
+    startsAt: { lte: now },
+  };
 }
 
 export async function listActiveDropsDto(): Promise<DropDto[]> {
+  const now = new Date();
   const drops = await prisma.drop.findMany({
-    where: activeVisibleWhere(),
+    where: liveDropWhere(now),
     orderBy: { createdAt: "asc" },
     include: {
       purchases: {
@@ -64,6 +71,8 @@ export type CreateMerchDropInput = {
   priceCents: number;
   totalUnits: number;
   isActive: boolean;
+  /** When reservations open; omit for immediate go-live. */
+  startsAt: Date;
 };
 
 function readNonEmptyString(v: unknown, field: string): string {
@@ -99,12 +108,20 @@ export function parseCreateMerchDropBody(body: unknown): CreateMerchDropInput {
     if (typeof b.isActive !== "boolean") throw new HttpError(400, "isActive must be boolean");
     isActive = b.isActive;
   }
+  let startsAt = new Date();
+  if (b.startsAt !== null && b.startsAt !== undefined) {
+    if (typeof b.startsAt !== "string") throw new HttpError(400, "startsAt must be an ISO-8601 string");
+    const parsed = new Date(b.startsAt);
+    if (Number.isNaN(parsed.getTime())) throw new HttpError(400, "startsAt must be a valid date");
+    startsAt = parsed;
+  }
   return {
     name,
     description,
     priceCents,
     totalUnits,
     isActive,
+    startsAt,
   };
 }
 
@@ -117,6 +134,7 @@ export async function createMerchDrop(input: CreateMerchDropInput): Promise<Drop
       totalUnits: input.totalUnits,
       availableStock: input.totalUnits,
       isActive: input.isActive,
+      startsAt: input.startsAt,
       updatedAt: null,
     },
     include: {
@@ -147,7 +165,7 @@ export async function reserveDropForUsername(
     const user = await ensureUserInTransaction(tx, username);
 
     const drop = await tx.drop.findFirst({
-      where: { id: dropId, ...activeVisibleWhere() },
+      where: { id: dropId, ...liveDropWhere(now) },
     });
     if (!drop) throw new HttpError(404, "Drop not found");
 
@@ -209,7 +227,7 @@ export async function purchaseDropForUsername(
     const user = await ensureUserInTransaction(tx, username);
 
     const drop = await tx.drop.findFirst({
-      where: { id: dropId, ...activeVisibleWhere() },
+      where: { id: dropId, ...liveDropWhere(now) },
     });
     if (!drop) throw new HttpError(404, "Drop not found");
 

@@ -33,7 +33,7 @@ export default function createDropsRouter(io: IoServer | null): Router {
         await broadcastInventorySync(io);
         res.status(201).json({
           message:
-            "Merch drop created successfully. It is live for buyers whenever isActive is true.",
+            "Merch drop created.",
           drop,
         });
       } catch (e) {
