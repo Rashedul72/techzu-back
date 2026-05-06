@@ -1,8 +1,9 @@
 import cors from "cors";
 import express, { type Request, type Response, type NextFunction } from "express";
 import type { Server as IoServer } from "socket.io";
+import { HttpError } from "./lib/httpError";
 import { clientOrigin } from "./lib/serverConfig";
-import dropsRouter from "./routes/drops.routes";
+import createDropsRouter from "./routes/drops.routes";
 import { broadcastInventorySync } from "./socket/inventory";
 
 export function createApp(io: IoServer): express.Express {
@@ -20,7 +21,7 @@ export function createApp(io: IoServer): express.Express {
     res.json({ ok: true });
   });
 
-  app.use("/api/drops", dropsRouter);
+  app.use("/api/drops", createDropsRouter(io));
 
   if (process.env.NODE_ENV !== "production") {
     app.post(
@@ -37,12 +38,11 @@ export function createApp(io: IoServer): express.Express {
   }
 
   app.use(
-    (
-      err: Error,
-      _req: Request,
-      res: Response,
-      _next: NextFunction,
-    ): void => {
+    (err: unknown, _req: Request, res: Response, _next: NextFunction): void => {
+      if (err instanceof HttpError) {
+        res.status(err.statusCode).json({ error: err.message });
+        return;
+      }
       console.error(err);
       res.status(500).json({ error: "Internal Server Error" });
     },

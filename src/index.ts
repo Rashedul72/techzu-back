@@ -8,16 +8,15 @@ import { registerInventorySocket } from "./socket/inventory";
 const port = httpPort();
 const corsOrigin = clientOrigin();
 
-const httpServer = http.createServer();
-const io = new Server(httpServer, {
+const io = new Server({
   cors: {
     origin: corsOrigin,
     methods: ["GET", "POST"],
   },
 });
-
-const app = createApp(io);
-httpServer.on("request", app);
+const expressApp = createApp(io);
+const httpServer = http.createServer(expressApp);
+io.attach(httpServer);
 
 registerInventorySocket(io);
 
